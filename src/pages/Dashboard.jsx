@@ -6,7 +6,7 @@ import { mockDrives, mockBadges, mockDonations } from '../data/mockData';
 import {
     LayoutDashboard, MapPin, Calendar, Trophy, DollarSign, QrCode,
     Award, Clock, Leaf, Star, TrendingUp, ArrowRight, ChevronRight,
-    User, Settings, Heart
+    User, Settings, Heart, Download
 } from 'lucide-react';
 
 const fadeUp = {
@@ -73,8 +73,8 @@ export default function Dashboard() {
                                     key={id}
                                     onClick={() => setActiveSection(id)}
                                     className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${activeSection === id
-                                            ? 'bg-emerald-500/15 text-emerald-400'
-                                            : 'text-gray-600 hover:text-gray-900 hover:bg-white shadow-sm border border-gray-100'
+                                        ? 'bg-emerald-500/15 text-emerald-400'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-white shadow-sm border border-gray-100'
                                         }`}
                                 >
                                     <Icon size={16} /> {label}
@@ -160,8 +160,8 @@ export default function Dashboard() {
                                             <div className="flex items-start justify-between mb-3">
                                                 <div>
                                                     <span className={`inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full mb-2 ${drive.status === 'completed' ? 'bg-gray-500/20 text-gray-500' :
-                                                            drive.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
-                                                                'bg-blue-500/20 text-blue-400'
+                                                        drive.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
+                                                            'bg-blue-500/20 text-blue-400'
                                                         }`}>{drive.status}</span>
                                                     <h3 className="text-base font-bold text-gray-900">{drive.title}</h3>
                                                 </div>
@@ -178,6 +178,11 @@ export default function Dashboard() {
                                                     <span className="text-emerald-400">{drive.impact.wasteKg}kg waste</span>
                                                     <span className="text-emerald-400">{drive.impact.workHours}h worked</span>
                                                 </div>
+                                            )}
+                                            {drive.status === 'completed' && (
+                                                <Link to={`/certificate/${drive.id}`} className="mt-3 flex items-center gap-2 px-4 py-2 bg-[#008303] text-white font-black text-xs rounded-xl border-2 border-[#005202] shadow-[3px_3px_0px_#005202] hover:-translate-y-1 transition-transform uppercase">
+                                                    <Award size={14} /> DOWNLOAD CERTIFICATE
+                                                </Link>
                                             )}
                                         </div>
                                     ))}

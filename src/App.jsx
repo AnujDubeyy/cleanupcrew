@@ -14,6 +14,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AdminPanel from './pages/AdminPanel';
 import ReportSpot from './pages/ReportSpot';
+import Certificate from './pages/Certificate';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -37,6 +38,7 @@ function AnimatedRoutes() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/report" element={<ReportSpot />} />
+            <Route path="/certificate/:driveId" element={<Certificate />} />
           </Routes>
         </AnimatePresence>
       </main>

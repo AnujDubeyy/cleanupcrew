@@ -8,6 +8,7 @@ import {
     CheckCircle2, AlertTriangle, Award, Camera, Truck, Gift,
     Package, Heart, QrCode, Share2, ChevronDown
 } from 'lucide-react';
+import StripePaymentModal from '../components/StripePaymentModal';
 
 export default function DriveDetail() {
     const { id } = useParams();
@@ -15,8 +16,10 @@ export default function DriveDetail() {
     const [selectedRole, setSelectedRole] = useState('');
     const [donateAmount, setDonateAmount] = useState('');
     const [showDonate, setShowDonate] = useState(false);
+    const [showStripe, setShowStripe] = useState(false);
     const [booked, setBooked] = useState(false);
     const [donated, setDonated] = useState(false);
+    const [paymentInfo, setPaymentInfo] = useState(null);
     const [activeTab, setActiveTab] = useState('overview');
 
     const drive = mockDrives.find(d => d.id === id);
@@ -43,8 +46,13 @@ export default function DriveDetail() {
 
     const handleDonate = () => {
         if (!donateAmount || Number(donateAmount) <= 0) return;
+        setShowStripe(true);
+    };
+
+    const handlePaymentSuccess = (paymentData) => {
+        setPaymentInfo(paymentData);
         setDonated(true);
-        setShowDonate(false);
+        setShowStripe(false);
     };
 
     const severityConfig = {
@@ -79,8 +87,8 @@ export default function DriveDetail() {
                     <div className="p-10">
                         <div className="flex flex-wrap items-center gap-3 mb-16">
                             <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${drive.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
-                                    drive.status === 'upcoming' ? 'bg-blue-500/20 text-blue-400' :
-                                        'bg-gray-500/20 text-gray-500'
+                                drive.status === 'upcoming' ? 'bg-blue-500/20 text-blue-400' :
+                                    'bg-gray-500/20 text-gray-500'
                                 }`}>
                                 {drive.status}
                             </span>
@@ -135,8 +143,8 @@ export default function DriveDetail() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap transition-all ${activeTab === tab.id
-                                    ? 'bg-emerald-500/20 text-emerald-400'
-                                    : 'text-gray-600 hover:text-gray-900 hover:bg-white shadow-sm border border-gray-100'
+                                ? 'bg-emerald-500/20 text-emerald-400'
+                                : 'text-gray-600 hover:text-gray-900 hover:bg-white shadow-sm border border-gray-100'
                                 }`}
                         >
                             {tab.label}
@@ -244,7 +252,10 @@ export default function DriveDetail() {
                                             <div className="text-center py-4">
                                                 <Heart size={40} className="text-emerald-400 mx-auto mb-2 fill-emerald-400" />
                                                 <p className="text-sm font-semibold text-emerald-400">Thank you!</p>
-                                                <p className="text-xs text-gray-600">Your donation is recorded.</p>
+                                                <p className="text-xs text-gray-600">₹{Number(donateAmount).toLocaleString()} donated via Stripe</p>
+                                                {paymentInfo && (
+                                                    <p className="text-[10px] text-gray-500 mt-1">Card: {paymentInfo.brand} •••• {paymentInfo.last4}</p>
+                                                )}
                                             </div>
                                         ) : (
                                             <div>
@@ -388,12 +399,26 @@ export default function DriveDetail() {
                                         </div>
                                     ))}
                                 </div>
-                                <p className="text-sm text-gray-500 text-center">Before/after images and detailed records available on the Transparency Portal.</p>
+                                <p className="text-sm text-gray-500 text-center mb-4">Before/after images and detailed records available on the Transparency Portal.</p>
+                                <div className="text-center">
+                                    <Link to={`/certificate/${drive.id}`} className="btn-primary inline-flex items-center gap-2">
+                                        <Award size={18} /> GET YOUR CERTIFICATE
+                                    </Link>
+                                </div>
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* Stripe Payment Modal */}
+            <StripePaymentModal
+                isOpen={showStripe}
+                onClose={() => setShowStripe(false)}
+                amount={Number(donateAmount) || 0}
+                driveName={drive.title}
+                onPaymentSuccess={handlePaymentSuccess}
+            />
         </div>
     );
 }
