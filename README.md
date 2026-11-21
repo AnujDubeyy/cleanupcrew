@@ -1,16 +1,68 @@
-# React + Vite
+# CleanupCrew
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CleanupCrew is a platform for organising and joining community cleanup drives: browse drives, view them on a map, report littered spots, track a leaderboard, and earn certificates for participation. It has a React frontend and a separate TypeScript/Express API backed by MongoDB.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Cleanup drive listings and drive details, with a map view (Leaflet)
+- Report-a-spot flow for flagging locations that need cleaning
+- Leaderboard and transparency pages
+- Accounts with email verification, user dashboard, and an admin panel
+- Certificates per drive (PDF generation on the API)
+- Stripe integration on both frontend and API for payments
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Frontend: React 19, Vite, React Router 7, Tailwind CSS v4, Framer Motion, Leaflet/`react-leaflet`, Stripe.js, Spline
+- API (`server/`): TypeScript, Express 5, Mongoose/MongoDB, JWT auth, bcrypt, Zod validation, Helmet/rate limiting, Nodemailer, PDFKit, Stripe
+- API tests: Jest + Supertest
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Prerequisites: Node.js and npm, plus a MongoDB database for the API.
+
+```bash
+git clone https://github.com/AnujDubeyy/cleanupcrew.git
+cd cleanupcrew
+npm install
+cd server && npm install && cd ..
+```
+
+Configure the API from environment variables (the server uses `dotenv`). Check `server/src` for the variables it reads — database connection, auth, payments and email settings — and set them in `server/.env`. Never commit a real `.env` file.
+
+Run the frontend and API together from the repo root:
+
+```bash
+npm run dev:full
+```
+
+Or run them separately:
+
+```bash
+npm run dev        # frontend (Vite)
+npm run dev:api    # API via nodemon in server/
+```
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` / `npm run build` / `npm run preview` | Frontend dev server / production build / preview |
+| `npm run build:api` | Typecheck and build the API (`server/`) |
+| `npm run lint` | Lint the frontend |
+
+API commands (run inside `server/`): `npm run dev`, `npm run build`, `npm start` (runs `dist/server.js`), `npm test`.
+
+## Project structure
+
+```
+cleanupcrew/
+├── index.html
+├── src/                     # React frontend: pages (Landing, Drives, MapPage, Leaderboard,
+│                            # Transparency, Login/Register, Dashboard, AdminPanel, ReportSpot,
+│                            # Certificate), components, context, hooks, data, lib
+├── server/                  # TypeScript Express API (@cleanupcrew/api)
+│   ├── src/                 # API source
+│   ├── seed.cjs             # Seed data
+│   └── promote-admin.js     # Admin promotion helper
+├── fix-ui.js polish.js refactor*.js swap-avatars.js   # One-off UI/refactor helper scripts
+└── package.json
+```
